@@ -1,0 +1,52 @@
+set cut_paste_input [stack 0]
+version 11.3 v6
+push $cut_paste_input
+Group {
+ name Transform_Aim
+ help "Transform_Aim v1.0.1\nGuillem Ramisa de Soto\n01:10:2019"
+ tile_color 0xa57aaaff
+ note_font "MS Shell Dlg 2"
+ note_font_color 0x101fff
+ selected true
+ xpos 131
+ ypos 35
+ addUserKnob {20 LookAt}
+ addUserKnob {41 src l INVISIBLE +INVISIBLE T LookAt_Wrapper.translate}
+ addUserKnob {12 SOURCE l Source}
+ addUserKnob {26 space_1 l "" +STARTLINE T " "}
+ addUserKnob {12 aim l Target}
+ aim {2048 0}
+ addUserKnob {26 space l "" +STARTLINE T " "}
+ addUserKnob {26 OFSSETS l OFFSETS}
+ addUserKnob {41 offset l "Position Offset" T LookAt_Wrapper.center}
+ addUserKnob {41 rotateOffset l "Rotate Offset" T LookAt_Wrapper.rotate}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 0
+  ypos -29
+ }
+ Transform {
+  translate {{parent.LookAt_Wrapper.translate} {parent.LookAt_Wrapper.translate}}
+  rotate {{"\[python -execlocal from\\ math\\ import\\ atan,degrees\\nsrcX,srcY\\ =\\ \\\[nuke.thisParent().knobs()\\\['src'\\].getLinkedKnob().getValue()\\\[i\\]+nuke.thisParent().knobs()\\\['offset'\\].getLinkedKnob().getValue()\\\[i\\]\\ for\\ i\\ in\\ range(2)\\]\\naimX,aimY\\ =\\ nuke.thisParent().knobs()\\\['aim'\\].getValue()\\naim\\ =\\ nuke.thisParent().knobs()\\\['aim'\\].getValue()\\ndeltaX,deltaY\\ =\\ (aimX-\\ srcX),(aimY\\ -\\ srcY)\\noffset\\ =\\ nuke.thisParent().knobs()\\\['rotateOffset'\\].getLinkedKnob().getValue()\\ntry:\\n\\ \\ \\ \\ angle\\ =\\ degrees(atan(deltaY/float(deltaX)))\\nexcept\\ ZeroDivisionError:\\n\\ \\ \\ \\ angle\\ =\\ 90\\ if\\ deltaY<=0\\ else\\ 270\\nfinally:\\n\\ \\ \\ \\ angle\\n\\ \\ \\ \\ ret\\ =\\ angle\\ -\\ (180\\ if\\ deltaX<=0\\ else\\ 0)\\ +\\ offset]" x1 0 x105 -116.6373251}}
+  center {{parent.LookAt_Wrapper.center} {parent.LookAt_Wrapper.center}}
+  shuttercustomoffset -1
+  name Aim_Transform
+  selected true
+  xpos 0
+  ypos 28
+ }
+ Output {
+  name Output
+  xpos 0
+  ypos 118
+ }
+ Transform {
+  inputs 0
+  translate {{parent.SOURCE} {parent.SOURCE}}
+  name LookAt_Wrapper
+  xpos 123
+  ypos 29
+ }
+end_group

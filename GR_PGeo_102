@@ -1,0 +1,108 @@
+set cut_paste_input [stack 0]
+version 11.3 v6
+push $cut_paste_input
+Group {
+ name PGeo
+ help "20:12:2018\nGramisa\nPGeo_v1.0.2"
+ selected true
+ xpos 156
+ ypos -42
+ addUserKnob {20 User}
+ addUserKnob {26 space l "" +STARTLINE T " "}
+ addUserKnob {4 GEO l Geometry M {Axis Card Sphere Cube}}
+ addUserKnob {26 space_1 l "" -STARTLINE T "    "}
+ addUserKnob {6 CreateScene l "Create Scene" -STARTLINE}
+ addUserKnob {26 space_2 l "" -STARTLINE T "    "}
+ addUserKnob {6 CheckPointCloud l "Check PointCloud" -STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {20 GEOPrperties l "Geo Properties" n 1}
+ addUserKnob {13 AxisRotation l rotate}
+ addUserKnob {13 AxisScale l scale}
+ AxisScale {1 1 1}
+ addUserKnob {26 space_3 l "" +STARTLINE T " "}
+ addUserKnob {7 GlobalScale l "uniform scale" R 0 10}
+ GlobalScale 1
+ addUserKnob {20 endGroup n -1}
+ addUserKnob {26 ""}
+ addUserKnob {12 ColorPicker l Picker}
+ ColorPicker {497.2000122 313}
+ addUserKnob {18 SAMPLEDcolor l INVISIBLE +INVISIBLE}
+ SAMPLEDcolor {{Sampler.Cordinates.r} {Sampler.Cordinates.g} {Sampler.Cordinates.b}}
+ addUserKnob {6 SAMPLEDcolor_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {6 SAMPLEDcolor_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {6 SAMPLEDcolor_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {6 SAMPLEDcolor_panelDropped_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {26 ""}
+ addUserKnob {22 CreateGeometry l "Create GEO" T "import nuke\n\nnn = nuke.thisNode()\nnCord = nn.knob('SAMPLEDcolor').value()\nGeo = nn.knob('GEO').value()\nScene = nn.knob('CreateScene').value()\n\nAScale = nn.knob('AxisScale').value()\nARotation = nn.knob('AxisRotation').value()\nGScale = nn.knob('GlobalScale').value()\n\ndef CreateGeo (Node, Cordinates, Scale, Rotation, GlobalScale):\n\tnGeo = nuke.createNode(Node)\n\tnGeo.knob('translate').setValue(Cordinates)\n\tnGeo.knob('rotate').setValue(Rotation)\n\tnGeo.knob('scaling').setValue(Scale)\n\tnGeo.knob('uniform_scale').setValue(GlobalScale)\n\n\tif Scene == 1:\n\t\tnScene = nuke.nodes.Scene()\n\t\tnCam = nuke.nodes.Camera()\n\t\tsRenderer = nuke.nodes.ScanlineRender()\n\n\t\tnScene.setInput(0,nGeo)\n\t\tnScene.setInput(1,nCam)\n\n\t\tsRenderer.setInput(2,nCam)\n\t\tsRenderer.setInput(1,nScene)\n\t\tsRenderer.knob('antialiasing').setValue('medium')\n\telse:\n\t\tpass\n\n\nwith nuke.root():\n\tCreateGeo(Geo, nCord, AScale, ARotation, GScale)\n\nnn.knob('AxisScale').setValue(1)\nnn.knob('AxisRotation').setValue(0)\nnn.knob('GlobalScale').setValue(1)" +STARTLINE}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 446
+  ypos -436
+ }
+set Nf32ab8f0 [stack 0]
+add_layer {P P.red P.green P.blue P.alpha}
+ PositionToPoints2 {
+  display textured
+  render_mode textured
+  P_channel P
+  detail 1
+  pointSize 2
+  name PositionToPoints3
+  xpos 550
+  ypos -304
+  disable {{-1+parent.CheckPointCloud}}
+ }
+push $Nf32ab8f0
+ Dot {
+  name Dot1
+  xpos 371
+  ypos -339
+ }
+push $Nf32ab8f0
+ Shuffle {
+  in P
+  name Shuffle11
+  xpos 446
+  ypos -410
+ }
+ NoOp {
+  name Sampler
+  xpos 446
+  ypos -384
+  addUserKnob {20 User}
+  addUserKnob {12 ColorPicker}
+  ColorPicker {{parent.ColorPicker.x} {parent.ColorPicker.y}}
+  addUserKnob {18 Cordinates}
+  Cordinates {{"\[sample \[node input] red (ColorPicker.x) (ColorPicker.y) ]"} {"\[sample \[node input] green (ColorPicker.x) (ColorPicker.y) ]"} {"\[sample \[node input] blue (ColorPicker.x) (ColorPicker.y) ]"}}
+  addUserKnob {6 Cordinates_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {6 Cordinates_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {6 Cordinates_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {6 Cordinates_panelDropped_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {6 Cordinates_panelDropped_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
+ }
+ ShuffleCopy {
+  inputs 2
+  in2 P
+  red red
+  green green
+  blue blue
+  out2 P
+  name ShuffleCopy1
+  xpos 446
+  ypos -343
+ }
+ Switch {
+  inputs 2
+  which {{parent.CheckPointCloud}}
+  name Switch
+  xpos 446
+  ypos -304
+ }
+ Output {
+  name Output1
+  xpos 446
+  ypos -240
+ }
+end_group

@@ -1,0 +1,246 @@
+set cut_paste_input [stack 0]
+version 11.3 v6
+push $cut_paste_input
+Group {
+ name Normalizer
+ help "19:05:2019\nGramisa\nRGB_Normalizer_v1.0.2"
+ selected true
+ xpos 144
+ ypos -27
+ addUserKnob {20 User}
+ addUserKnob {6 premult +STARTLINE}
+ addUserKnob {6 clamped l clamp -STARTLINE}
+ addUserKnob {6 normalize -STARTLINE}
+ normalize true
+ addUserKnob {26 spacee l "" -STARTLINE T "    //    "}
+ addUserKnob {6 Motion -STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {7 Rotation R -180 180}
+ addUserKnob {26 ""}
+ addUserKnob {7 Xadd}
+ addUserKnob {7 Yadd}
+ addUserKnob {7 Zadd}
+ Zadd 1
+ addUserKnob {26 ""}
+ addUserKnob {7 softenX R 0 100}
+ addUserKnob {7 softenY R 0 100}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -893
+  ypos -751
+ }
+ Dot {
+  name Dot371
+  xpos -859
+  ypos -639
+ }
+set Nf2c87550 [stack 0]
+ Matrix {
+  channels rgb
+  matrix {
+      {{MAGY*-2} {MAGY*-1} {MAGY*-2}}
+      {0 {"parent.ADD_gY.Yadd < 0.001 ? 0.001 : parent.ADD_gY.Yadd"} 0}
+      {{MAGY*2} {MAGY} {MAGY*2}}
+    }
+  name Matrix_SOBEL_Y
+  tile_color 0xff0000
+  xpos -1016
+  ypos -643
+  addUserKnob {20 User}
+  addUserKnob {7 MAGY}
+  MAGY 1
+ }
+set Nf29b7de0 [stack 0]
+ Blur {
+  channels rgba
+  size {{parent.softenY}}
+  name BLUR_Y
+  label "\[value size]"
+  xpos -1163
+  ypos -649
+ }
+push $Nf29b7de0
+ Blur {
+  channels rgba
+  size {{parent.softenY/10}}
+  name BLUR_Ybase
+  label "\[value size]"
+  xpos -1097
+  ypos -592
+ }
+ Merge2 {
+  inputs 2
+  operation average
+  Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  name Merge1
+  xpos -1163
+  ypos -534
+ }
+push $Nf29b7de0
+ Merge2 {
+  inputs 2
+  operation average
+  Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  name Merge3
+  xpos -1016
+  ypos -534
+ }
+ Expression {
+  channel0 {rgba.red -rgba.green rgba.blue none}
+  expr0 0
+  expr1 g
+  expr2 0
+  channel3 none
+  name ADD_gY
+  xpos -1016
+  ypos -413
+  addUserKnob {20 User}
+  addUserKnob {7 Yadd}
+  Yadd {{parent.Yadd}}
+ }
+push $Nf2c87550
+ Matrix {
+  channels rgb
+  matrix {
+      {{MAGX*2} 0 {MAGX*-2}}
+      {{MAGX} {"parent.ADD_rX.Xadd < 0.001 ? 0.001 : parent.ADD_rX.Xadd"} {MAGX*-1}}
+      {{MAGX*2} 0 {MAGX*-2}}
+    }
+  name Matrix_SOBEL_X
+  tile_color 0xff000000
+  xpos -778
+  ypos -643
+  addUserKnob {20 User}
+  addUserKnob {7 MAGX}
+  MAGX 1
+ }
+set Nf3717ff0 [stack 0]
+ Blur {
+  channels rgba
+  size {{parent.softenX}}
+  name BLUR_X
+  label "\[value size]"
+  xpos -613
+  ypos -649
+ }
+push $Nf3717ff0
+ Blur {
+  channels rgba
+  size {{parent.softenX/10}}
+  name BLUR_Xbase
+  label "\[value size]"
+  xpos -694
+  ypos -594
+ }
+ Merge2 {
+  inputs 2
+  operation average
+  Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  name Merge2
+  xpos -613
+  ypos -534
+ }
+push $Nf3717ff0
+ Merge2 {
+  inputs 2
+  operation average
+  Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  name Merge4
+  xpos -778
+  ypos -534
+ }
+ Expression {
+  expr0 r
+  channel1 {-rgba.red rgba.green rgba.blue none}
+  expr1 0
+  channel2 none
+  channel3 none
+  name ADD_rX
+  xpos -778
+  ypos -413
+  addUserKnob {20 User}
+  addUserKnob {7 Xadd}
+  Xadd {{parent.Xadd}}
+ }
+ ShuffleCopy {
+  inputs 2
+  green green
+  blue black
+  name ShuffleCopy7
+  xpos -896
+  ypos -413
+ }
+ Expression {
+  temp_name0 RED
+  temp_expr0 "(r*cos(RADIANTS)) - (g*sin(RADIANTS))"
+  temp_name1 GREEN
+  temp_expr1 "(r*sin(RADIANTS)) + (g*cos(RADIANTS))"
+  temp_name2 BLUE
+  temp_expr2 sqrt(pow2(r)-pow2(g)+(1*ADD_Z))
+  expr0 RED
+  expr1 GREEN
+  expr2 isnan(BLUE)?0:BLUE
+  expr3 a
+  name EXPRESSION_CONTROL
+  tile_color 0xffff00
+  xpos -896
+  ypos -316
+  addUserKnob {20 User}
+  addUserKnob {7 ROTATION R -180 180}
+  ROTATION {{parent.Rotation}}
+  addUserKnob {7 RADIANTS}
+  RADIANTS {{(ROTATION*(pi/180))}}
+  addUserKnob {26 ""}
+  addUserKnob {7 ADD_Z}
+  ADD_Z {{parent.Zadd}}
+  addUserKnob {26 ""}
+  addUserKnob {6 VALUEclamp +STARTLINE}
+  VALUEclamp {{parent.clamped}}
+ }
+ Grade {
+  add 0.5
+  gamma 0.5
+  black_clamp false
+  name OFFSETS
+  xpos -896
+  ypos -247
+  disable {{!parent.normalize x1 1 x207 0}}
+ }
+ Premult {
+  name Premult1
+  xpos -896
+  ypos -221
+  disable {{!parent.premult}}
+ }
+set Nf3782e90 [stack 0]
+ Shuffle {
+  out motion
+  name Shuffle1
+  xpos -760
+  ypos -173
+ }
+push $Nf3782e90
+ Copy {
+  inputs 2
+  channels motion
+  name Copy1
+  xpos -896
+  ypos -186
+  disable {{!parent.Motion}}
+ }
+ Output {
+  name Output1
+  xpos -896
+  ypos -97
+ }
+end_group
