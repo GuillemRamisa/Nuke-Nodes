@@ -1,0 +1,73 @@
+set cut_paste_input [stack 0]
+version 11.3 v6
+Group {
+ inputs 0
+ name DOTS
+ help "DOTS v1.0.1\nGuillem Ramisa de Soto\n21:04:2020"
+ selected true
+ xpos -40
+ ypos -85
+ addUserKnob {20 DOTS3 l Controls}
+ addUserKnob {26 DOTS l "<font size = 5><b><font color=#ff0000>D</font><b> <b><font color=#00ff00>O</font><b> <b><font color=#0000ff>T</font><b> S" T ""}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 Mode l <b>Mode</b> T " "}
+ addUserKnob {6 DLMode l "Dots / ScanLines  " t "Dots / Scan Lines" -STARTLINE}
+ addUserKnob {6 DDiagonal l diagonal t "Dots in PC-CRT disposition style" -STARTLINE}
+ addUserKnob {6 LAxis l axis t "Switch X / Y axis on ScanLine mode" -STARTLINE +HIDDEN}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {3 DLAmount l Amount t "Iterations on screen-space. 3 iteration per n*"}
+ DLAmount 33
+ addUserKnob {7 LMult l "    Lines Mult" t "Lines global multiplier" -STARTLINE +HIDDEN}
+ LMult 0.66
+ addUserKnob {7 DMult l "    Dots Mult" t "Dots global multiplier" -STARTLINE R 0 3}
+ DMult 1
+ addUserKnob {26 space l "" +STARTLINE T " "}
+ addUserKnob {7 DSize l Size t "Dots size" R 0.1 2}
+ DSize 1
+ addUserKnob {7 DSoftness l Softness t "Dots softness" R 0.1 6}
+ DSoftness 1
+ addUserKnob {7 DAspectRatio l "Aspect Ratio" t "Dots aspect Ratio" -STARTLINE R 0 2}
+ DAspectRatio 1
+ addUserKnob {7 LSpacing l Spacing t "Line spacing" +HIDDEN}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 format -STARTLINE T BlinkScript_DOTS.format}
+ addUserKnob {20 Settings}
+ addUserKnob {41 "Local GPU: " T BlinkScript_DOTS.gpuName}
+ addUserKnob {41 "Use GPU if Available" T BlinkScript_DOTS.useGPUIfAvailable}
+ addUserKnob {41 vectorize l "Vectorize on CPU" -STARTLINE T BlinkScript_DOTS.vectorize}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 grds l "" +STARTLINE T "<i>2020 | V1.0.1 | </i> <b>www.guillemramisadesoto.com</b>"}
+}
+ BlinkScript {
+  inputs 0
+  recompileCount 3
+  ProgramGroup 1
+  KernelDescription "2 \"DOTS3\" iterate pixelWise 8cbec79bfe3bd06551b0c2a25b1063e0c4e26072b8b644bda0e0e67fc31bdf7f 1 \"dst\" Write Point 10 \"amount\" Int 1 IQAAAA== \"dots / scanlines\" Bool 1 AA== \"diagonal\" Bool 1 AA== \"axisScanLine\" Bool 1 AA== \"Size\" Float 1 AACAPw== \"Aspect Ratio\" Float 1 AACAPw== \"Softness\" Float 1 AACAPw== \"Line Spacing\" Float 1 AAAAAA== \"dots Mult\" Float 1 AACAPw== \"Line Mult\" Float 1 AACAPw== 10 \"n\" 1 1 \"sd\" 1 1 \"d\" 1 1 \"ax\" 1 1 \"s\" 1 1 \"AR\" 1 1 \"G\" 1 1 \"LSP\" 1 1 \"DM\" 1 1 \"LM\" 1 1 3 \"pi\" Float 1 1 AAAAAA== \"angle\" Float 1 1 AAAAAA== \"N\" Float 1 1 AAAAAA=="
+  EncodedSource "1 2921 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"
+  rebuild ""
+  DOTS3_amount {{parent.DLAmount}}
+  "DOTS3_dots / scanlines" {{parent.DLMode}}
+  DOTS3_diagonal {{parent.DDiagonal}}
+  DOTS3_axisScanLine {{parent.LAxis}}
+  DOTS3_Size {{parent.DSize}}
+  "DOTS3_Aspect Ratio" {{parent.DAspectRatio}}
+  DOTS3_Softness {{parent.DSoftness}}
+  "DOTS3_Line Spacing" {{parent.LSpacing}}
+  "DOTS3_dots Mult" {{parent.DMult}}
+  "DOTS3_Line Mult" {{parent.LMult}}
+  protectKernelWhenPublishing true
+  format "1920 1080 0 0 1920 1080 1 HD_1080"
+  rebuild_finalise ""
+  name BlinkScript_DOTS
+  xpos 244
+  ypos -121
+  addUserKnob {20 User}
+  addUserKnob {7 KLBKS l "" +STARTLINE}
+  KLBKS {{"\[python -execlocal par\\ =\\ nuke.thisParent()\\nvis\\ =\\ par.knob('DLMode').getValue()\\n\\npar.knob('LAxis').setVisible(bool(vis))\\npar.knob('LSpacing').setVisible(bool(vis))\\npar.knob('LMult').setVisible(bool(vis))\\n\\npar.knob('DDiagonal').setVisible(bool(vis-1))\\npar.knob('DSize').setVisible(bool(vis-1))\\npar.knob('DSoftness').setVisible(bool(vis-1))\\npar.knob('DAspectRatio').setVisible(bool(vis-1))\\npar.knob('DMult').setVisible(bool(vis-1))\\n\\nret\\ =\\ vis]"}}
+ }
+ Output {
+  name Output1
+  xpos 244
+  ypos -21
+ }
+end_group
