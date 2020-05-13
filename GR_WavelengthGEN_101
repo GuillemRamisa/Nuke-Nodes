@@ -1,0 +1,321 @@
+set cut_paste_input [stack 0]
+version 11.3 v6
+Group {
+ inputs 0
+ name WavelenghtGEN
+ help "13:05:2020\nWavelenghtGEN v1.0.0\nGuillem Ramisa de Soto"
+ selected true
+ xpos -2875
+ ypos -3381
+ addUserKnob {20 User l controls}
+ addUserKnob {41 colorspace_out l "out space" -STARTLINE T Colorspace1.colorspace_out}
+ addUserKnob {26 space l "" -STARTLINE T "        //        "}
+ addUserKnob {6 RAW l "Raw / Optical" -STARTLINE}
+ RAW true
+ addUserKnob {41 box_width l width/height T RES_out.box_width}
+ addUserKnob {41 box_height l "" -STARTLINE T RES_out.box_height}
+ addUserKnob {41 posOffsetRGB l Offset T wavelengthIMPL1.posOffsetRGB}
+ addUserKnob {41 posOffsetRGB_panelDropped l "panel dropped state" +INVISIBLE T wavelengthIMPL1.posOffsetRGB_panelDropped}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {22 refresh +STARTLINE}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 leg l "" +STARTLINE T "WavelengthGEN v1.0.0\nGuillem Ramisa de Soto || 2020"}
+}
+ Reformat {
+  inputs 0
+  type "to box"
+  box_width 400
+  box_height 100
+  box_fixed true
+  resize distort
+  name RES_Base
+  xpos -656
+  ypos -149
+ }
+set Ndc5f7eb0 [stack 0]
+ Expression {
+  temp_name0 R
+  temp_expr0 isinf(RGBw0.r)?0:RGBw0.r
+  temp_name1 G
+  temp_expr1 isinf(RGBw0.g)?0:RGBw0.g
+  temp_name2 B
+  temp_expr2 isinf(RGBw0.b)?0:RGBw0.b
+  channel0 {rgba.red -rgba.green -rgba.blue none}
+  expr0 "fmod((x)+posOffsetRGB.r,width) ==frame-1?R:0"
+  channel1 {-rgba.red rgba.green -rgba.blue none}
+  expr1 "fmod((x)+posOffsetRGB.g,width) ==frame-1?G:0"
+  channel2 {-rgba.red -rgba.green rgba.blue none}
+  expr2 "fmod((x)+posOffsetRGB.b,width) ==frame-1?B:0"
+  expr3 0
+  name wavelengthIMPL1
+  xpos -656
+  ypos -125
+  addUserKnob {20 User}
+  addUserKnob {14 WLrange l "wavelength range" R 0 100}
+  WLrange {380 780}
+  addUserKnob {7 wavelength R 380 780}
+  wavelength {{380+(frame-1)}}
+  addUserKnob {26 ""}
+  addUserKnob {3 wavelengthRangeThreshold l "wavelength threshold"}
+  wavelengthRangeThreshold {{"wavelength>= 380 && wavelength<= 410 ? 410 : 0\n|| wavelength>= 410 && wavelength<= 440 ? 440 : 0\n|| wavelength>= 440 && wavelength<= 490 ? 490 : 0\n|| wavelength>= 490 && wavelength<= 510 ? 510 : 0\n|| wavelength>= 510 && wavelength<= 580 ? 580 : 0\n|| wavelength>= 580 && wavelength<= 640 ? 640 : 0\n|| wavelength>= 640 && wavelength<= 700 ? 700 : 0\n|| wavelength>= 700 && wavelength<= 780 ? 780 : 0"}}
+  addUserKnob {3 WLDIV l "wavelength divider"}
+  WLDIV {{"wavelength>= 380 && wavelength<= 410 ? 30 : 0\n|| wavelength>= 410 && wavelength<= 440 ? 30 : 0\n|| wavelength>= 440 && wavelength<= 490 ? 50 : 0\n|| wavelength>= 490 && wavelength<= 510 ? 20 : 0\n|| wavelength>= 510 && wavelength<= 580 ? 70 : 0\n|| wavelength>= 580 && wavelength<= 640 ? 60 : 0\n|| wavelength>= 640 && wavelength<= 700 ? 1 : 0\n|| wavelength>= 700 && wavelength<= 780 ? 80 : 0"}}
+  addUserKnob {26 ""}
+  addUserKnob {18 RGBw l "RGB wavelength base point 380-410"}
+  RGBw {{"0.6 - 0.41 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 {"0.39 + 0.6 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"}}
+  addUserKnob {6 RGBw_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw2 l "RGB wavelength base point 410-440"}
+  RGBw2 {{"0.19 - 0.19 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 1}
+  addUserKnob {6 RGBw2_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw3 l "RGB wavelength base point 440-490"}
+  RGBw3 {0 {"1- ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 1}
+  addUserKnob {6 RGBw3_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw4 l "RGB wavelength base point 490-510"}
+  RGBw4 {0 1 {"( (wavelengthRangeThreshold-wavelength)/WLDIV)"}}
+  addUserKnob {6 RGBw4_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw5 l "RGB wavelength base point 510-580"}
+  RGBw5 {{"1- ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 1 0}
+  addUserKnob {6 RGBw5_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw6 l "RGB wavelength base point 580-640"}
+  RGBw6 {1 {"( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0}
+  addUserKnob {6 RGBw6_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw7 l "RGB wavelength base point 640-700"}
+  RGBw7 {1 0 0}
+  addUserKnob {6 RGBw7_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw8 l "RGB wavelength base point 700-780"}
+  RGBw8 {{"0.35 - 0.65 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 0}
+  addUserKnob {6 RGBw8_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 ""}
+  addUserKnob {20 curves n 1}
+  curves 0
+  addUserKnob {26 R l "" +STARTLINE T "R  "}
+  addUserKnob {1 w1 l wr1 -STARTLINE}
+  w1 "1-\[value RGBw.r]*.85-.2"
+  addUserKnob {1 w2 l wr2 -STARTLINE}
+  w2 " \[value RGBw2.r]*-1.5+.3"
+  addUserKnob {1 w3 l wr3 -STARTLINE}
+  w3 "\[value RGBw3.r]"
+  addUserKnob {1 w4 l wr4 -STARTLINE}
+  w4 "\[value RGBw4.r]"
+  addUserKnob {1 w5 l wr5 -STARTLINE}
+  w5 "\[value RGBw5.r]"
+  addUserKnob {1 w6 l wr6 -STARTLINE}
+  w6 "\[value RGBw6.r]"
+  addUserKnob {1 w7 l wr7 -STARTLINE}
+  w7 "\[value RGBw7.r]"
+  addUserKnob {1 w8 l wr8 -STARTLINE}
+  w8 "1-\[value RGBw5.r]*.6"
+  addUserKnob {26 G l "" +STARTLINE T "G  "}
+  addUserKnob {1 wg1 -STARTLINE}
+  wg1 "\[value RGBw.g]"
+  addUserKnob {1 wg2 -STARTLINE}
+  wg2 "\[value RGBw2.g]"
+  addUserKnob {1 wg3 -STARTLINE}
+  wg3 "\[value RGBw3.g]"
+  addUserKnob {1 wg4 -STARTLINE}
+  wg4 "\[value RGBw4.g]"
+  addUserKnob {1 wg5 -STARTLINE}
+  wg5 "\[value RGBw5.g]"
+  addUserKnob {1 wg6 -STARTLINE}
+  wg6 "\[value RGBw6.g]"
+  addUserKnob {1 wg7 -STARTLINE}
+  wg7 "\[value RGBw7.g]"
+  addUserKnob {1 wg8 -STARTLINE}
+  wg8 "\[value RGBw8.g]"
+  addUserKnob {26 B l "" +STARTLINE T "B  "}
+  addUserKnob {1 wb1 -STARTLINE}
+  wb1 "1-\[value RGBw.b]*.66"
+  addUserKnob {1 wb2 -STARTLINE}
+  wb2 "1-\[value RGBw.b]*.66+.4"
+  addUserKnob {1 wb3 -STARTLINE}
+  wb3 "\[value RGBw5.b]+.999"
+  addUserKnob {1 wb4 -STARTLINE}
+  wb4 "\[value RGBw4.b]"
+  addUserKnob {1 wb5 -STARTLINE}
+  wb5 "\[value RGBw5.b]"
+  addUserKnob {1 wb6 -STARTLINE}
+  wb6 "\[value RGBw6.b]"
+  addUserKnob {1 wb7 -STARTLINE}
+  wb7 "\[value RGBw7.b]"
+  addUserKnob {1 wb8 -STARTLINE}
+  wb8 "\[value RGBw8.b]"
+  addUserKnob {20 endGroup n -1}
+  addUserKnob {26 ""}
+  addUserKnob {18 RGBw0 l "RGB wavelength sum"}
+  RGBw0 {{"wavelength>= 380 && wavelength<= 410 ? \[value w1] : 0\n|| wavelength>= 410 && wavelength<= 440 ? \[value w2] : 0\n|| wavelength>= 440 && wavelength<= 490 ? \[value w3]: 0\n|| wavelength>= 490 && wavelength<= 510 ? \[value w4] : 0\n|| wavelength>= 510 && wavelength<= 580 ? \[value w5] : 0\n|| wavelength>= 580 && wavelength<= 640 ? \[value w6] : 0\n|| wavelength>= 640 && wavelength<= 700 ? \[value w7]: 0\n|| wavelength>= 700 && wavelength<= 780 ? \[value w8] : 0"} {"wavelength>= 380 && wavelength<= 410 ? \[value wg1] : 0\n|| wavelength>= 410 && wavelength<= 440 ? \[value wg2] : 0\n|| wavelength>= 440 && wavelength<= 490 ? \[value wg3] : 0\n|| wavelength>= 490 && wavelength<= 510 ? \[value wg4] : 0\n|| wavelength>= 510 && wavelength<= 580 ? \[value wg5] : 0\n|| wavelength>= 580 && wavelength<= 640 ? \[value wg6] : 0\n|| wavelength>= 640 && wavelength<= 700 ? \[value wg7] : 0\n|| wavelength>= 700 && wavelength<= 780 ? \[value wg8] : 0"} {"wavelength>= 380 && wavelength<= 410 ? \[value wb1] : 0\n|| wavelength>= 410 && wavelength<= 440 ? \[value wb2] : 0\n|| wavelength>= 440 && wavelength<= 490 ? \[value wb3] : 0\n|| wavelength>= 490 && wavelength<= 510 ? \[value wb4] : 0\n|| wavelength>= 510 && wavelength<= 580 ? \[value wb5] : 0\n|| wavelength>= 580 && wavelength<= 640 ? \[value wb6] : 0\n|| wavelength>= 640 && wavelength<= 700 ? \[value wb7] : 0\n|| wavelength>= 700 && wavelength<= 780 ? \[value wb8] : 0"}}
+  addUserKnob {6 RGBw0_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 ""}
+  addUserKnob {26 ref l "" +STARTLINE T "From wavelength to rgb filter.\nDragoş MIHAI1, Eugen STRĂJESCU2 // 2007\nISSN1453-2358\n\nPorted by Guillem Ramisa de Soto || 2020"}
+  addUserKnob {20 cntr}
+  addUserKnob {3 posOffset}
+  addUserKnob {18 posOffsetRGB}
+  posOffsetRGB {0 0 0}
+  addUserKnob {6 posOffsetRGB_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ }
+push $Ndc5f7eb0
+ Expression {
+  temp_name0 R
+  temp_expr0 isinf(RGBw0.r)?0:RGBw0.r
+  temp_name1 G
+  temp_expr1 isinf(RGBw0.g)?0:RGBw0.g
+  temp_name2 B
+  temp_expr2 isinf(RGBw0.b)?0:RGBw0.b
+  channel0 {rgba.red -rgba.green -rgba.blue none}
+  expr0 "fmod((x)+posOffsetRGB.r,width) ==frame-1?R:0"
+  channel1 {-rgba.red rgba.green -rgba.blue none}
+  expr1 "fmod((x)+posOffsetRGB.g,width) ==frame-1?G:0"
+  channel2 {-rgba.red -rgba.green rgba.blue none}
+  expr2 "fmod((x)+posOffsetRGB.b,width) ==frame-1?B:0"
+  expr3 0
+  name wavelengthIMPL2
+  xpos -569
+  ypos -126
+  addUserKnob {20 User}
+  addUserKnob {14 WLrange l "wavelength range" R 0 100}
+  WLrange {380 780}
+  addUserKnob {7 wavelength R 380 780}
+  wavelength {{380+(frame-1)}}
+  addUserKnob {26 ""}
+  addUserKnob {3 wavelengthRangeThreshold l "wavelength threshold"}
+  wavelengthRangeThreshold {{"wavelength>= 380 && wavelength<= 410 ? 410 : 0\n|| wavelength>= 410 && wavelength<= 440 ? 440 : 0\n|| wavelength>= 440 && wavelength<= 490 ? 490 : 0\n|| wavelength>= 490 && wavelength<= 510 ? 510 : 0\n|| wavelength>= 510 && wavelength<= 580 ? 580 : 0\n|| wavelength>= 580 && wavelength<= 640 ? 640 : 0\n|| wavelength>= 640 && wavelength<= 700 ? 700 : 0\n|| wavelength>= 700 && wavelength<= 780 ? 780 : 0"}}
+  addUserKnob {3 WLDIV l "wavelength divider"}
+  WLDIV {{"wavelength>= 380 && wavelength<= 410 ? 30 : 0\n|| wavelength>= 410 && wavelength<= 440 ? 30 : 0\n|| wavelength>= 440 && wavelength<= 490 ? 50 : 0\n|| wavelength>= 490 && wavelength<= 510 ? 20 : 0\n|| wavelength>= 510 && wavelength<= 580 ? 70 : 0\n|| wavelength>= 580 && wavelength<= 640 ? 60 : 0\n|| wavelength>= 640 && wavelength<= 700 ? 1 : 0\n|| wavelength>= 700 && wavelength<= 780 ? 80 : 0"}}
+  addUserKnob {26 ""}
+  addUserKnob {18 RGBw l "RGB wavelength base point 380-410"}
+  RGBw {{"0.6 - 0.41 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 {"0.39 + 0.6 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"}}
+  addUserKnob {6 RGBw_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw2 l "RGB wavelength base point 410-440"}
+  RGBw2 {{"0.19 - 0.19 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 1}
+  addUserKnob {6 RGBw2_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw3 l "RGB wavelength base point 440-490"}
+  RGBw3 {0 {"1- ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 1}
+  addUserKnob {6 RGBw3_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw4 l "RGB wavelength base point 490-510"}
+  RGBw4 {0 1 {"( (wavelengthRangeThreshold-wavelength)/WLDIV)"}}
+  addUserKnob {6 RGBw4_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw5 l "RGB wavelength base point 510-580"}
+  RGBw5 {{"1- ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 1 0}
+  addUserKnob {6 RGBw5_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw6 l "RGB wavelength base point 580-640"}
+  RGBw6 {1 {"( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0}
+  addUserKnob {6 RGBw6_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw7 l "RGB wavelength base point 640-700"}
+  RGBw7 {1 0 0}
+  addUserKnob {6 RGBw7_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 RGBw8 l "RGB wavelength base point 700-780"}
+  RGBw8 {{"0.35 - 0.65 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 0}
+  addUserKnob {6 RGBw8_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 ""}
+  addUserKnob {20 curves n 1}
+  addUserKnob {26 R l "" +STARTLINE T "R  "}
+  addUserKnob {1 w1 l wr1 -STARTLINE}
+  w1 "\[value RGBw.r]"
+  addUserKnob {1 w2 l wr2 -STARTLINE}
+  w2 "\[value RGBw2.r]"
+  addUserKnob {1 w3 l wr3 -STARTLINE}
+  w3 "\[value RGBw3.r]"
+  addUserKnob {1 w4 l wr4 -STARTLINE}
+  w4 "\[value RGBw4.r]"
+  addUserKnob {1 w5 l wr5 -STARTLINE}
+  w5 "\[value RGBw5.r]"
+  addUserKnob {1 w6 l wr6 -STARTLINE}
+  w6 "\[value RGBw6.r]"
+  addUserKnob {1 w7 l wr7 -STARTLINE}
+  w7 "\[value RGBw7.r]"
+  addUserKnob {1 w8 l wr8 -STARTLINE}
+  w8 "\[value RGBw8.r]"
+  addUserKnob {26 G l "" +STARTLINE T "G  "}
+  addUserKnob {1 wg1 -STARTLINE}
+  wg1 "\[value RGBw.g]"
+  addUserKnob {1 wg2 -STARTLINE}
+  wg2 "\[value RGBw2.g]"
+  addUserKnob {1 wg3 -STARTLINE}
+  wg3 "\[value RGBw3.g]"
+  addUserKnob {1 wg4 -STARTLINE}
+  wg4 "\[value RGBw4.g]"
+  addUserKnob {1 wg5 -STARTLINE}
+  wg5 "\[value RGBw5.g]"
+  addUserKnob {1 wg6 -STARTLINE}
+  wg6 "\[value RGBw6.g]"
+  addUserKnob {1 wg7 -STARTLINE}
+  wg7 "\[value RGBw7.g]"
+  addUserKnob {1 wg8 -STARTLINE}
+  wg8 "\[value RGBw8.g]"
+  addUserKnob {26 B l "" +STARTLINE T "B  "}
+  addUserKnob {1 wb1 -STARTLINE}
+  wb1 "\[value RGBw.b]"
+  addUserKnob {1 wb2 -STARTLINE}
+  wb2 "\[value RGBw2.b]"
+  addUserKnob {1 wb3 -STARTLINE}
+  wb3 "\[value RGBw3.b]"
+  addUserKnob {1 wb4 -STARTLINE}
+  wb4 "\[value RGBw4.b]"
+  addUserKnob {1 wb5 -STARTLINE}
+  wb5 "\[value RGBw5.b]"
+  addUserKnob {1 wb6 -STARTLINE}
+  wb6 "\[value RGBw6.b]"
+  addUserKnob {1 wb7 -STARTLINE}
+  wb7 "\[value RGBw7.b]"
+  addUserKnob {1 wb8 -STARTLINE}
+  wb8 "\[value RGBw8.b]"
+  addUserKnob {20 endGroup n -1}
+  addUserKnob {26 ""}
+  addUserKnob {18 RGBw0 l "RGB wavelength sum"}
+  RGBw0 {{"wavelength>= 380 && wavelength<= 410 ? \[value w1] : 0\n|| wavelength>= 410 && wavelength<= 440 ? \[value w2] : 0\n|| wavelength>= 440 && wavelength<= 490 ? \[value w3]: 0\n|| wavelength>= 490 && wavelength<= 510 ? \[value w4] : 0\n|| wavelength>= 510 && wavelength<= 580 ? \[value w5] : 0\n|| wavelength>= 580 && wavelength<= 640 ? \[value w6] : 0\n|| wavelength>= 640 && wavelength<= 700 ? \[value w7]: 0\n|| wavelength>= 700 && wavelength<= 780 ? \[value w8] : 0"} {"wavelength>= 380 && wavelength<= 410 ? \[value wg1] : 0\n|| wavelength>= 410 && wavelength<= 440 ? \[value wg2] : 0\n|| wavelength>= 440 && wavelength<= 490 ? \[value wg3] : 0\n|| wavelength>= 490 && wavelength<= 510 ? \[value wg4] : 0\n|| wavelength>= 510 && wavelength<= 580 ? \[value wg5] : 0\n|| wavelength>= 580 && wavelength<= 640 ? \[value wg6] : 0\n|| wavelength>= 640 && wavelength<= 700 ? \[value wg7] : 0\n|| wavelength>= 700 && wavelength<= 780 ? \[value wg8] : 0"} {"wavelength>= 380 && wavelength<= 410 ? \[value wb1] : 0\n|| wavelength>= 410 && wavelength<= 440 ? \[value wb2] : 0\n|| wavelength>= 440 && wavelength<= 490 ? \[value wb3] : 0\n|| wavelength>= 490 && wavelength<= 510 ? \[value wb4] : 0\n|| wavelength>= 510 && wavelength<= 580 ? \[value wb5] : 0\n|| wavelength>= 580 && wavelength<= 640 ? \[value wb6] : 0\n|| wavelength>= 640 && wavelength<= 700 ? \[value wb7] : 0\n|| wavelength>= 700 && wavelength<= 780 ? \[value wb8] : 0"}}
+  addUserKnob {6 RGBw0_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 ""}
+  addUserKnob {26 ref l "" +STARTLINE T "From wavelength to rgb filter.\nDragoş MIHAI1, Eugen STRĂJESCU2 // 2007\nISSN1453-2358\n\nPorted by Guillem Ramisa de Soto || 2020"}
+  addUserKnob {20 cntr}
+  addUserKnob {3 posOffset}
+  addUserKnob {18 posOffsetRGB}
+  posOffsetRGB {{parent.wavelengthIMPL1.posOffsetRGB} {parent.wavelengthIMPL1.posOffsetRGB} {parent.wavelengthIMPL1.posOffsetRGB}}
+  addUserKnob {6 posOffsetRGB_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ }
+ Switch {
+  inputs 2
+  which {{parent.RAW}}
+  name Switch1
+  xpos -656
+  ypos -93
+ }
+ TimeEcho {
+  mode Plus
+  framesbehind {{parent.RES_Base.box_width}}
+  frmaesfade 0
+  name TimeEcho
+  xpos -656
+  ypos -58
+ }
+ FrameHold {
+  first_frame {{parent.RES_Base.box_width}}
+  name FrameHold
+  xpos -656
+  ypos -34
+  addUserKnob {20 User}
+  addUserKnob {7 rfrsh l "" +STARTLINE}
+  rfrsh 1
+ }
+ Colorspace {
+  colorspace_in sRGB
+  name Colorspace1
+  selected true
+  xpos -656
+  ypos -2
+ }
+ Reformat {
+  type "to box"
+  box_width 400
+  box_height 50
+  box_fixed true
+  resize distort
+  filter Impulse
+  name RES_out
+  xpos -656
+  ypos 22
+ }
+ Output {
+  name Output1
+  xpos -656
+  ypos 99
+ }
+end_group
