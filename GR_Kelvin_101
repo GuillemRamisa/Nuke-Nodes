@@ -6,8 +6,8 @@ Group {
  help "13-05-2020\nKelvin v1.0.1\nGuillem Ramisa de Soto"
  label "\[value K]"
  selected true
- xpos 399
- ypos -61
+ xpos 319
+ ypos -78
  addUserKnob {20 KELVIN}
  addUserKnob {41 "Local GPU: " T BlinkScript2.gpuName}
  addUserKnob {41 "Use GPU if Available" T BlinkScript2.useGPUIfAvailable}
@@ -15,7 +15,7 @@ Group {
  addUserKnob {6 lin +STARTLINE}
  lin true
  addUserKnob {7 K R 0 80000}
- K 80000
+ K 6500
  addUserKnob {26 "" +STARTLINE}
  addUserKnob {26 leg l "" +STARTLINE T "Normalised with kelvin scale. Color temperature.\n\nKelvin v1.0.1\nGuillem Ramisa de Soto"}
 }
