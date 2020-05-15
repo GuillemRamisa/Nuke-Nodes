@@ -5,20 +5,20 @@ Group {
  name WavelenghtGEN
  help "13:05:2020\nWavelenghtGEN v1.0.0\nGuillem Ramisa de Soto"
  selected true
- xpos -2875
- ypos -3381
+ xpos -3537
+ ypos -2042
  addUserKnob {20 User l controls}
- addUserKnob {41 colorspace_out l "out space" -STARTLINE T Colorspace1.colorspace_out}
+ addUserKnob {26 ""}
+ addUserKnob {22 refresh -STARTLINE}
  addUserKnob {26 space l "" -STARTLINE T "        //        "}
+ addUserKnob {41 colorspace_out l "out space" -STARTLINE T Colorspace1.colorspace_out}
  addUserKnob {6 RAW l "Raw / Optical" -STARTLINE}
  RAW true
+ addUserKnob {26 ""}
  addUserKnob {41 box_width l width/height T RES_out.box_width}
  addUserKnob {41 box_height l "" -STARTLINE T RES_out.box_height}
  addUserKnob {41 posOffsetRGB l Offset T wavelengthIMPL1.posOffsetRGB}
  addUserKnob {41 posOffsetRGB_panelDropped l "panel dropped state" +INVISIBLE T wavelengthIMPL1.posOffsetRGB_panelDropped}
- addUserKnob {26 "" +STARTLINE}
- addUserKnob {22 refresh +STARTLINE}
- addUserKnob {26 "" +STARTLINE}
  addUserKnob {26 leg l "" +STARTLINE T "WavelengthGEN v1.0.0\nGuillem Ramisa de Soto || 2020"}
 }
  Reformat {
@@ -32,7 +32,7 @@ Group {
   xpos -656
   ypos -149
  }
-set Ndc5f7eb0 [stack 0]
+set N60f66180 [stack 0]
  Expression {
   temp_name0 R
   temp_expr0 isinf(RGBw0.r)?0:RGBw0.r
@@ -62,28 +62,28 @@ set Ndc5f7eb0 [stack 0]
   WLDIV {{"wavelength>= 380 && wavelength<= 410 ? 30 : 0\n|| wavelength>= 410 && wavelength<= 440 ? 30 : 0\n|| wavelength>= 440 && wavelength<= 490 ? 50 : 0\n|| wavelength>= 490 && wavelength<= 510 ? 20 : 0\n|| wavelength>= 510 && wavelength<= 580 ? 70 : 0\n|| wavelength>= 580 && wavelength<= 640 ? 60 : 0\n|| wavelength>= 640 && wavelength<= 700 ? 1 : 0\n|| wavelength>= 700 && wavelength<= 780 ? 80 : 0"}}
   addUserKnob {26 ""}
   addUserKnob {18 RGBw l "RGB wavelength base point 380-410"}
-  RGBw {{"0.6 - 0.41 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 {"0.39 + 0.6 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"}}
+  RGBw {{0.6-0.41*(wavelengthRangeThreshold-wavelength)/WLDIV} 0 {0.39+0.6*(wavelengthRangeThreshold-wavelength)/WLDIV}}
   addUserKnob {6 RGBw_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw2 l "RGB wavelength base point 410-440"}
-  RGBw2 {{"0.19 - 0.19 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 1}
+  RGBw2 {{0.19-0.19*(wavelengthRangeThreshold-wavelength)/WLDIV} 0 1}
   addUserKnob {6 RGBw2_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw3 l "RGB wavelength base point 440-490"}
-  RGBw3 {0 {"1- ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 1}
+  RGBw3 {0 {1-(wavelengthRangeThreshold-wavelength)/WLDIV} 1}
   addUserKnob {6 RGBw3_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw4 l "RGB wavelength base point 490-510"}
-  RGBw4 {0 1 {"( (wavelengthRangeThreshold-wavelength)/WLDIV)"}}
+  RGBw4 {0 1 {(wavelengthRangeThreshold-wavelength)/WLDIV}}
   addUserKnob {6 RGBw4_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw5 l "RGB wavelength base point 510-580"}
-  RGBw5 {{"1- ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 1 0}
+  RGBw5 {{1-(wavelengthRangeThreshold-wavelength)/WLDIV} 1 0}
   addUserKnob {6 RGBw5_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw6 l "RGB wavelength base point 580-640"}
-  RGBw6 {1 {"( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0}
+  RGBw6 {1 {(wavelengthRangeThreshold-wavelength)/WLDIV} 0}
   addUserKnob {6 RGBw6_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw7 l "RGB wavelength base point 640-700"}
   RGBw7 {1 0 0}
   addUserKnob {6 RGBw7_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw8 l "RGB wavelength base point 700-780"}
-  RGBw8 {{"0.35 - 0.65 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 0}
+  RGBw8 {{0.35-0.65*(wavelengthRangeThreshold-wavelength)/WLDIV} 0 0}
   addUserKnob {6 RGBw8_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {26 ""}
   addUserKnob {20 curves n 1}
@@ -152,7 +152,7 @@ set Ndc5f7eb0 [stack 0]
   posOffsetRGB {0 0 0}
   addUserKnob {6 posOffsetRGB_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  }
-push $Ndc5f7eb0
+push $N60f66180
  Expression {
   temp_name0 R
   temp_expr0 isinf(RGBw0.r)?0:RGBw0.r
@@ -168,8 +168,9 @@ push $Ndc5f7eb0
   expr2 "fmod((x)+posOffsetRGB.b,width) ==frame-1?B:0"
   expr3 0
   name wavelengthIMPL2
-  xpos -569
-  ypos -126
+  selected true
+  xpos -546
+  ypos -101
   addUserKnob {20 User}
   addUserKnob {14 WLrange l "wavelength range" R 0 100}
   WLrange {380 780}
@@ -182,31 +183,32 @@ push $Ndc5f7eb0
   WLDIV {{"wavelength>= 380 && wavelength<= 410 ? 30 : 0\n|| wavelength>= 410 && wavelength<= 440 ? 30 : 0\n|| wavelength>= 440 && wavelength<= 490 ? 50 : 0\n|| wavelength>= 490 && wavelength<= 510 ? 20 : 0\n|| wavelength>= 510 && wavelength<= 580 ? 70 : 0\n|| wavelength>= 580 && wavelength<= 640 ? 60 : 0\n|| wavelength>= 640 && wavelength<= 700 ? 1 : 0\n|| wavelength>= 700 && wavelength<= 780 ? 80 : 0"}}
   addUserKnob {26 ""}
   addUserKnob {18 RGBw l "RGB wavelength base point 380-410"}
-  RGBw {{"0.6 - 0.41 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 {"0.39 + 0.6 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"}}
+  RGBw {{0.6-0.41*(wavelengthRangeThreshold-wavelength)/WLDIV} 0 {0.39+0.6*(wavelengthRangeThreshold-wavelength)/WLDIV}}
   addUserKnob {6 RGBw_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw2 l "RGB wavelength base point 410-440"}
-  RGBw2 {{"0.19 - 0.19 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 1}
+  RGBw2 {{0.19-0.19*(wavelengthRangeThreshold-wavelength)/WLDIV} 0 1}
   addUserKnob {6 RGBw2_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw3 l "RGB wavelength base point 440-490"}
-  RGBw3 {0 {"1- ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 1}
+  RGBw3 {0 {1-(wavelengthRangeThreshold-wavelength)/WLDIV} 1}
   addUserKnob {6 RGBw3_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw4 l "RGB wavelength base point 490-510"}
-  RGBw4 {0 1 {"( (wavelengthRangeThreshold-wavelength)/WLDIV)"}}
+  RGBw4 {0 1 {(wavelengthRangeThreshold-wavelength)/WLDIV}}
   addUserKnob {6 RGBw4_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw5 l "RGB wavelength base point 510-580"}
-  RGBw5 {{"1- ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 1 0}
+  RGBw5 {{1-(wavelengthRangeThreshold-wavelength)/WLDIV} 1 0}
   addUserKnob {6 RGBw5_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw6 l "RGB wavelength base point 580-640"}
-  RGBw6 {1 {"( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0}
+  RGBw6 {1 {(wavelengthRangeThreshold-wavelength)/WLDIV} 0}
   addUserKnob {6 RGBw6_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw7 l "RGB wavelength base point 640-700"}
   RGBw7 {1 0 0}
   addUserKnob {6 RGBw7_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 RGBw8 l "RGB wavelength base point 700-780"}
-  RGBw8 {{"0.35 - 0.65 * ( (wavelengthRangeThreshold-wavelength)/WLDIV)"} 0 0}
+  RGBw8 {{0.35-0.65*(wavelengthRangeThreshold-wavelength)/WLDIV} 0 0}
   addUserKnob {6 RGBw8_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {26 ""}
   addUserKnob {20 curves n 1}
+  curves 0
   addUserKnob {26 R l "" +STARTLINE T "R  "}
   addUserKnob {1 w1 l wr1 -STARTLINE}
   w1 "\[value RGBw.r]"
@@ -275,22 +277,25 @@ push $Ndc5f7eb0
   inputs 2
   which {{parent.RAW}}
   name Switch1
+  selected true
   xpos -656
-  ypos -93
+  ypos -101
  }
  TimeEcho {
   mode Plus
   framesbehind {{parent.RES_Base.box_width}}
   frmaesfade 0
   name TimeEcho
+  selected true
   xpos -656
-  ypos -58
+  ypos -77
  }
  FrameHold {
   first_frame {{parent.RES_Base.box_width}}
   name FrameHold
+  selected true
   xpos -656
-  ypos -34
+  ypos -53
   addUserKnob {20 User}
   addUserKnob {7 rfrsh l "" +STARTLINE}
   rfrsh 1
@@ -300,7 +305,7 @@ push $Ndc5f7eb0
   name Colorspace1
   selected true
   xpos -656
-  ypos -2
+  ypos -21
  }
  Reformat {
   type "to box"
@@ -310,12 +315,14 @@ push $Ndc5f7eb0
   resize distort
   filter Impulse
   name RES_out
+  selected true
   xpos -656
-  ypos 22
+  ypos 3
  }
  Output {
   name Output1
+  selected true
   xpos -656
-  ypos 99
+  ypos 27
  }
 end_group

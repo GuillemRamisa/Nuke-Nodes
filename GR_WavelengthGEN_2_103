@@ -1,0 +1,50 @@
+set cut_paste_input [stack 0]
+version 11.3 v6
+Group {
+ inputs 0
+ name Blink_WaveLengthGEN_2
+ help "15:05:2020\nWavelenghtGEN_2 v1.0.3\nGuillem Ramisa de Soto"
+ selected true
+ xpos 1162
+ ypos 44
+ addUserKnob {20 Wavelength}
+ addUserKnob {41 "Local GPU: " T BlinkScript4.gpuName}
+ addUserKnob {41 "Use GPU if Available" T BlinkScript4.useGPUIfAvailable}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 "increment in wavelength(nm)" T "BlinkScript4.Wavelength_increment in wavelength(nm)"}
+ addUserKnob {41 "raw / smoothstep" T "BlinkScript4.Wavelength_raw / smoothstep"}
+ addUserKnob {6 lin l srgb/lin -STARTLINE}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 format T BlinkScript4.format}
+ addUserKnob {41 specifiedFormat l "Specify output format" -STARTLINE T BlinkScript4.specifiedFormat}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 leg2 l "" +STARTLINE T "Transversal plot of spectra based on CIE 1931 chromaticity diagram.\n\nWavelengthGEN_2 v1.0.3\nGuillem Ramisa de Soto || 2020"}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 leg l "" +STARTLINE T "Based on:\nSimple Analytic Approximations to the CIE XYZ Color Matching Functions\nChris Wyman , Peter-Pike Sloan , Peter Shirley // NVIDIA\nJournal of Computer Graphics Techniques Vol. 2, No. 2, 2013"}
+}
+ BlinkScript {
+  inputs 0
+  recompileCount 16
+  KernelDescription "2 \"Wavelength\" iterate pixelWise 1078df0ad8a2c2addbd7e23a83aa2970b761b4bc72795f6bd65dc9745491deac 1 \"dst\" Write Point 2 \"increment in wavelength(nm)\" Int 1 /wEAAA== \"raw / smoothstep\" Bool 1 AQ== 2 \"increments\" 1 1 \"raw\" 1 1 0"
+  kernelSource "// smoothstep\nfloat smoothstep( float a, float b, float x ) \{\n  float t = clamp((x - a) / (b - a), 0.0, 1.0);\n  return t*t * (3.0f - 2.0f*t);\n\}\n\n//Journal of Computer Graphics Techniques Vol. 2, No. 2, 2013\n//Simple Analytic Approximations to the CIE XYZ Color Matching Functions\n//Chris Wyman , Peter-Pike Sloan , Peter Shirley // NVIDIA\n\n//Ported by Guillem Ramisa de Soto | 2020\n\n// Inputs: Wavelength in nanometers\ninline float xFit_1931( float wave )\{\n\tfloat t1 = (wave-442.0f)*((wave<442.0f)?0.0624f:0.0374f);\n\tfloat t2 = (wave-599.8f)*((wave<599.8f)?0.0264f:0.0323f);\n\tfloat t3 = (wave-501.1f)*((wave<501.1f)?0.0490f:0.0382f);\n\treturn 0.362f*exp(-0.5f*t1*t1) + 1.056f*exp(-0.5f*t2*t2) - 0.065f*exp(-0.5f*t3*t3);\n\}\n\ninline float yFit_1931( float wave )\{\n\tfloat t1 = (wave-568.8f)*((wave<568.8f)?0.0213f:0.0247f);\n\tfloat t2 = (wave-530.9f)*((wave<530.9f)?0.0613f:0.0322f);\n\treturn 0.821f*exp(-0.5f*t1*t1) + 0.286f*exp(-0.5f*t2*t2);\n\}\n\ninline float zFit_1931( float wave )\{\n\tfloat t1 = (wave-437.0f)*((wave<437.0f)?0.0845f:0.0278f);\n\tfloat t2 = (wave-459.0f)*((wave<459.0f)?0.0385f:0.0725f);\n\treturn 1.217f*exp(-0.5f*t1*t1) + 0.681f*exp(-0.5f*t2*t2);\n\}\n\n\nkernel Wavelength : ImageComputationKernel<ePixelWise>\n\{\n\tImage<eWrite> dst;\n\n\tparam:\n\t\tint increments;\n\t\tbool raw;\n\n\tvoid define()\{\n\t\tdefineParam(increments, \"increment in wavelength(nm)\", 511);\n\t\tdefineParam(raw, \"raw / smoothstep\", true);\n\t\}\n\n\tvoid process(int2 pos) \{\n\t\tfloat totalX = 0.0f;\n\t\tfloat totalY = 0.0f;\n\t\tfloat totalZ = 0.0f;\n\n\t\tfor (int i = 0; i < increments; i++) \{\n\t\t\tfloat Xr = xFit_1931( 350.f + i );\n\t\t\tfloat Yg = yFit_1931( 350.f + i );\n\t\t\tfloat Zb = zFit_1931( 350.f + i );\n\t\t\ttotalX += pos.x == increments-i?Xr:0;\n\t\t\ttotalY += pos.x == increments-i?Yg:0;\n\t\t\ttotalZ += pos.x == increments-i?Zb:0;\n\t\t\}\n\t\tfloat X = smoothstep(0.0f, 1.0f, totalX);\n\t\tfloat Y = smoothstep(0.0f, 1.0f, totalY);\n\t\tfloat Z = smoothstep(0.0f, 1.0f, totalZ);\n\n\t\tfloat4 smoothXYZ = float4(X,Y,Z,1.0f);\n\t\tfloat4 RAWXYZ = float4(totalX,totalY,totalZ,1.0f);\n\n\t\tdst() = raw == true ? RAWXYZ : smoothXYZ;\n\t\}\n\};"
+  rebuild ""
+  format "512 512 0 0 512 512 1 square_512"
+  rebuild_finalise ""
+  name BlinkScript4
+  xpos 971
+  ypos -59
+ }
+ Colorspace {
+  colorspace_in sRGB
+  name Colorspace1
+  xpos 971
+  ypos -27
+  disable {{parent.lin}}
+ }
+ Output {
+  name Output1
+  selected true
+  xpos 971
+  ypos -3
+ }
+end_group
