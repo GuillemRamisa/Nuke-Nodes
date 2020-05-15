@@ -1,0 +1,53 @@
+set cut_paste_input [stack 0]
+version 11.3 v6
+Group {
+ inputs 0
+ name WavelengthSpectraGEN_v3
+ help "15:05:2020\nWavelenghtGEN_3 v1.0.0\nGuillem Ramisa de Soto"
+ selected true
+ xpos 486
+ ypos -155
+ addUserKnob {20 WavelengthSpectra}
+ addUserKnob {41 "Local GPU: " T BlinkScript4.gpuName}
+ addUserKnob {41 "Use GPU if Available" T BlinkScript4.useGPUIfAvailable}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 mode T BlinkScript4.WavelengthSpectra_mode}
+ addUserKnob {6 lin -STARTLINE}
+ lin true
+ addUserKnob {41 wavlength T BlinkScript4.WavelengthSpectra_wavlength}
+ addUserKnob {41 increments T BlinkScript4.WavelengthSpectra_increments}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 format T BlinkScript4.format}
+ addUserKnob {41 specifiedFormat l "Specify output format" -STARTLINE T BlinkScript4.specifiedFormat}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 leg l "" +STARTLINE T "Blink WavelengthGEN_3 v1.0.0\nGuillem Ramisa de Soto || 2020"}
+}
+ BlinkScript {
+  inputs 0
+  recompileCount 12
+  ProgramGroup 1
+  KernelDescription "2 \"WavelengthSpectra\" iterate pixelWise eebe9f6280cb638d8ed3da06d90627e23c038766c28395bb42cf3a5bc6eebdb7 1 \"dst\" Write Point 3 \"mode\" Bool 1 AA== \"wavlength\" Float 1 AADIQw== \"increments\" Int 1 AAAAAA== 3 \"mode\" 1 1 \"l\" 1 1 \"increments\" 1 1 0"
+  kernelSource "inline float4 spectral_color(float l)\n    \{\n    float t;\n    float r=0.0;\n    float g=0.0;\n    float b=0.0;\n         if ((l>=400.0)&&(l<410.0))\{\n            t= (l-400.0)/(410.0-400.0);\n            r= +(0.33*t)-(0.20*t*t);\n        \}else if ((l>=410.0)&&(l<475.0))\{\n            t=(l-410.0)/(475.0-410.0);\n            r=0.14-(0.13*t*t);\n        \}else if ((l>=545.0)&&(l<595.0))\{\n            t=(l-545.0)/(595.0-545.0);\n            r= +(1.98*t)-(t*t);\n        \}else if ((l>=595.0)&&(l<650.0))\{\n            t=(l-595.0)/(650.0-595.0);\n            r=0.98+(0.06*t)-(0.40*t*t);\n        \}else if ((l>=650.0)&&(l<700.0))\{\n            t=(l-650.0)/(700.0-650.0);\n            r=0.65-(0.84*t)+(0.20*t*t);\n        \}\n\n        if ((l>=415.0)&&(l<475.0))\{\n            t=(l-415.0)/(475.0-415.0);\n            g=+(0.80*t*t);\n        \}else if ((l>=475.0)&&(l<590.0))\{\n            t=(l-475.0)/(590.0-475.0);\n            g=0.8 +(0.76*t)-(0.80*t*t);\n        \}else if ((l>=585.0)&&(l<639.0))\{\n            t=(l-585.0)/(639.0-585.0);\n            g=0.84-(0.84*t);\n        \}\n        \n         if ((l>=400.0)&&(l<475.0))\{\n            t=(l-400.0)/(475.0-400.0);\n            b=    +(2.20*t)-(1.50*t*t);\n        \}else if ((l>=475.0)&&(l<560.0))\{\n            t=(l-475.0)/(560.0-475.0);\n            b=0.7 -(t)+(0.30*t*t);\n        \}\n        return float4 (r,g,b,1.0f);\n    \}\n\n    kernel WavelengthSpectra : ImageComputationKernel<ePixelWise>\n\{\n    Image<eWrite> dst;\n\n    param:\n        bool mode;\n        float l;\n        int increments;\n\n\n    void define()\{\n        defineParam(l, \"wavlength\", 400.0f);\n    \}\n\n    void process(int2 pos) \{\n        float4 totalSpectra = float4(0.0f,0.0f,0.0f,0.0f);\n\n        for (int i = 0; i < increments; i++) \{\n            float4 Spec = spectral_color(400.f + i);\n            totalSpectra += pos.x == increments-i?Spec:0;\n        \}\n\n        float4 s = spectral_color(l);\n        float4 S = float4(totalSpectra.x,totalSpectra.y,totalSpectra.z,1.0f);\n        dst() = mode == true ? s : S;\n    \}\n\};"
+  rebuild ""
+  WavelengthSpectra_wavlength 800
+  WavelengthSpectra_increments 300
+  format "512 512 0 0 512 512 1 square_512"
+  rebuild_finalise ""
+  name BlinkScript4
+  xpos 348
+  ypos -107
+ }
+ Colorspace {
+  colorspace_in sRGB
+  name Colorspace1
+  xpos 348
+  ypos -75
+  disable {{!parent.lin}}
+ }
+ Output {
+  name Output1
+  selected true
+  xpos 348
+  ypos -51
+ }
+end_group
