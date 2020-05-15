@@ -1,0 +1,92 @@
+set cut_paste_input [stack 0]
+version 11.3 v6
+Group {
+ inputs 0
+ name WavelenghtGENv3
+ help "15:05:2020\nWavelenghtGEN v3.0.1\nGuillem Ramisa de Soto"
+ selected true
+ xpos -4169
+ ypos -2205
+ addUserKnob {20 User l controls}
+ addUserKnob {26 ""}
+ addUserKnob {22 refresh -STARTLINE}
+ addUserKnob {26 space l "" -STARTLINE T "        //        "}
+ addUserKnob {6 lin l linear -STARTLINE}
+ lin true
+ addUserKnob {26 ""}
+ addUserKnob {14 Resolution -STARTLINE R 0 100}
+ Resolution {300 30}
+ addUserKnob {41 filter -STARTLINE T Reformat1.filter}
+ addUserKnob {26 ""}
+ addUserKnob {26 leg l "" +STARTLINE T "WavelengthGEN v3.0.1\nGuillem Ramisa de Soto || 2020"}
+}
+ Reformat {
+  inputs 0
+  type "to box"
+  box_width 300
+  box_height 30
+  box_fixed true
+  name Reformat3
+  xpos -852
+  ypos -105
+ }
+ Expression {
+  expr0 "x == yPOS ? SPECTRA.r : 0"
+  expr1 "x == yPOS ? SPECTRA.g : 0"
+  expr2 "x == yPOS ? SPECTRA.b : 0"
+  expr3 1
+  name wavelengthGENv3
+  tile_color 0xff000000
+  xpos -852
+  ypos -54
+  addUserKnob {20 User}
+  addUserKnob {7 w l wavelength R 400 700}
+  w {{yPOS+400}}
+  addUserKnob {18 t}
+  t {{"w>=400&&w<410?(w-400)/(410-400):0\n||w>=410 &&w<475?(w-410)/(475-410):0\n||w>=545 &&w<595?(w-545)/(595-545):0\n||w>=595 &&w<650?(w-595)/(650-595):0\n||w>=650 &&w<700?(w-650)/(700-650):0"} {"w>=415&&w<475?(w-415)/(475-415):0\n||w>=475&&w<590?(w-475)/(590-475):0\n||w>=585&&w<639?(w-585)/(639-585):0"} {"w>=400&&w<475?(w-400)/(475-400):0\n||w>=475 &&w<560?(w-475)/(560-475):0"}}
+  addUserKnob {6 t_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 SPECTRA}
+  SPECTRA {{"w>=400&&w<410?+(0.33*t.r)-(0.20*t.r*t.r):0\n||w>=410&&w<475?0.14-(0.13*t.r*t.r):0\n||w>=545&&w<595?+(1.98*t.r)-(t.r*t.r):0\n||w>=595&&w<650?0.98+(0.06*t.r)-(0.40*t.r*t.r):0\n||w>=650&&w<700?0.65-(0.84*t.r)+(0.20*t.r*t.r):0"} {"w>=415&&w<475?+(0.80*t.g*t.g):0\n||w>=475&&w<590?0.8+(0.76*t.g)-(0.80*t.g*t.g):0\n||w>=585&&w<639?0.84-(0.84*t.g):0"} {"w>=400&&w<475?+(2.20*t.b)-(1.50*t.b*t.b):0\n||w>=475&&w<560?0.7-(t.b)+(0.30*t.b*t.b):0"}}
+  addUserKnob {6 SPECTRA_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 ""}
+  addUserKnob {3 yPOS l Y}
+  yPOS {{frame-1}}
+  addUserKnob {26 ""}
+  addUserKnob {26 ""}
+  addUserKnob {26 leg l "" +STARTLINE T "From linearized real spectroscopy data.\nhttps://www.cfa.harvard.edu/ssp/images/SolarCCD.jpg\n\nPorted by Guillem Ramisa de Soto || 2020"}
+ }
+ TimeEcho {
+  mode Plus
+  framesbehind {{parent.Reformat3.box_width}}
+  name TimeEcho1
+  xpos -852
+  ypos 1
+ }
+ FrameHold {
+  first_frame {{parent.Reformat3.box_width}}
+  name FrameHold1
+  xpos -852
+  ypos 25
+ }
+ Colorspace {
+  colorspace_in sRGB
+  name Colorspace2
+  xpos -852
+  ypos 57
+  disable {{!parent.lin}}
+ }
+ Reformat {
+  type "to box"
+  box_width {{parent.Resolution.w}}
+  box_height {{parent.Resolution.h}}
+  box_fixed true
+  name Reformat1
+  xpos -852
+  ypos 81
+ }
+ Output {
+  name Output1
+  xpos -852
+  ypos 105
+ }
+end_group
