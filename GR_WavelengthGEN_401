@@ -1,0 +1,93 @@
+set cut_paste_input [stack 0]
+version 11.3 v6
+Group {
+ inputs 0
+ name WavelenghtGENv4
+ help "16:05:2020\nWavelenghtGEN v4.0.0\nGuillem Ramisa de Soto"
+ selected true
+ xpos -4282
+ ypos -2179
+ addUserKnob {20 User l controls}
+ addUserKnob {26 ""}
+ addUserKnob {22 refresh -STARTLINE}
+ addUserKnob {26 space l "" -STARTLINE T "        //        "}
+ addUserKnob {41 colorspace_out l "out space" -STARTLINE T Colorspace1.colorspace_out}
+ addUserKnob {26 ""}
+ addUserKnob {41 box_width l width/height T RES_out.box_width}
+ addUserKnob {41 box_height l "" -STARTLINE T RES_out.box_height}
+ addUserKnob {41 posOffsetRGB_panelDropped l "panel dropped state" +INVISIBLE T wavelengthIMPL1.posOffsetRGB_panelDropped}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 leg l "" +STARTLINE T "WavelengthGEN v4.0.0\nGuillem Ramisa de Soto || 2020"}
+}
+ Reformat {
+  inputs 0
+  type "to box"
+  box_width 400
+  box_height 100
+  box_fixed true
+  resize distort
+  name RES_Base
+  xpos -656
+  ypos -125
+ }
+ Expression {
+  expr0 "x == Ypos ? RGBsum.r : 0"
+  expr1 "x == Ypos ? RGBsum.g : 0"
+  expr2 "x == Ypos ? RGBsum.b : 0"
+  expr3 1
+  name WavelengthIMPLv4
+  xpos -656
+  ypos -101
+  addUserKnob {20 User}
+  addUserKnob {7 w R 380 780}
+  w {{Ypos+380}}
+  addUserKnob {26 ""}
+  addUserKnob {18 RGBsum}
+  RGBsum {{"w>= 380 && w< 410 ? lerp(0.19000,0.58633,0.58633,0.19000, (0.6 - 0.41 * (410-w)/30) ) : 0\n\n|| w>= 410 && w< 440 ? lerp(0,0.18367,0.18367,0, (0.19 - 0.19 * (440-w)/30) ) : 0\n\n|| w>= 440 && w< 490 ? 0 : 0\n\n|| w>= 490 && w< 510 ? 0 : 0\n\n|| w>= 510 && w< 580 ? 1 - (580-w)/70 : 0\n\n|| w>= 580 && w< 640 ? 1 : 0\n\n|| w>= 640 && w< 700 ? 1 : 0\n\n|| w>= 700 && w< 780 ? 0.35 + 0.65 * (780-w)/80 : 0"} {"w>= 380 && w< 410 ? 0 : 0\n\n|| w>= 410 && w< 440 ? 0 : 0\n\n|| w>= 440 && w< 490 ? 1 - (490-w)/50 : 0\n\n|| w>= 490 && w< 510 ? 1 : 0\n\n|| w>= 510 && w< 580 ? 1 : 0\n\n|| w>= 580 && w< 640 ? (640-w)/60 : 0\n\n|| w>= 640 && w< 700 ? 0 : 0\n\n|| w>= 700 && w< 780 ? 0 : 0"} {"w>= 380 && w< 410 ? (1-(0.39 + 0.6 * (410-w)/30)) *1.6111 : 0\n\n|| w>= 410 && w< 440 ? 1 : 0\n\n|| w>= 440 && w< 490 ? 1 : 0\n\n|| w>= 490 && w< 510 ? (510-w)/20 : 0\n\n|| w>= 510 && w< 580 ? 0 : 0\n\n|| w>= 580 && w< 640 ? 0 : 0\n\n|| w>= 640 && w< 700 ? 0 : 0\n\n|| w>= 700 && w< 780 ? 0 : 0"}}
+  addUserKnob {6 RGBsum_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 ""}
+  addUserKnob {3 Ypos l Y}
+  Ypos {{frame-1}}
+  addUserKnob {6 RGBoff_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 "" +STARTLINE}
+  addUserKnob {26 leg l "" +STARTLINE T "From wavelength to rgb filter.\nDragoş MIHAI1, Eugen STRĂJESCU2 // 2007\nISSN1453-2358\n\nPorted by Guillem Ramisa de Soto || 2020"}
+ }
+ TimeEcho {
+  framesbehind {{parent.RES_Base.box_width}}
+  frmaesfade 0
+  name TimeEcho
+  xpos -656
+  ypos -77
+ }
+ FrameHold {
+  first_frame {{parent.RES_Base.box_width}}
+  name FrameHold
+  xpos -656
+  ypos -53
+  addUserKnob {20 User}
+  addUserKnob {7 rfrsh l "" +STARTLINE}
+  rfrsh 1
+ }
+ Colorspace {
+  colorspace_in sRGB
+  name Colorspace1
+  xpos -656
+  ypos -21
+ }
+ Reformat {
+  type "to box"
+  box_width 400
+  box_height 40
+  box_fixed true
+  resize distort
+  filter Impulse
+  name RES_out
+  xpos -656
+  ypos 3
+ }
+ Output {
+  name Output1
+  xpos -656
+  ypos 27
+ }
+end_group
