@@ -1,0 +1,520 @@
+#! /Applications/Nuke11.3v6/Nuke11.3v6.app/Contents/MacOS/libnuke-11.3.6.dylib -nx
+version 11.3 v6
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="23" w="1440" h="855" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="777" stretch="1"/>
+            <splitter orientation="2">
+                <split size="487"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="343"/>
+                <dock id="" activePageId="DAG.3" focus="true">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                    <page id="DAG.2"/>
+                    <page id="DAG.3"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+                <page id="uk.co.thefoundry.backgroundrenderview.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name /Users/guillemramisadesoto/Documents/NUKE_DEV/Nuke-Nodes/Polar_to_Rect.nk
+ format "512 512 0 0 512 512 1 square_512"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement Nuke
+ workingSpaceLUT linear
+ monitorLut sRGB
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut Cineon
+ floatLut linear
+}
+Constant {
+ inputs 0
+ channels rgb
+ name Constant1
+ xpos 308
+ ypos -74
+}
+set Nc4cef050 [stack 0]
+Rectangle {
+ area {0 0 3 3}
+ name Rectangle1
+ xpos 152
+ ypos -26
+}
+Transform {
+ translate {{parent.transfomations_POLAR_to_RECT.XY1} {parent.transfomations_POLAR_to_RECT.XY1}}
+ center {1 1}
+ name Transform1
+ xpos 152
+ ypos -2
+}
+Group {
+ name PolarDistort
+ xpos 152
+ ypos 22
+ addUserKnob {20 User l Controls}
+ addUserKnob {4 Out l Transform M {"Rectangular to Polar" "Polar to Rectangular" ""}}
+ addUserKnob {6 Ccc l CheckerSample +STARTLINE}
+ addUserKnob {26 About l "" +STARTLINE T "\nDaniel Velikov  © 2015 \n"}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos -711
+  ypos -2
+ }
+ CheckerBoard2 {
+  inputs 0
+  name CheckerBoard1
+  xpos -516
+  ypos 42
+ }
+ Switch {
+  inputs 2
+  which {{!Ccc}}
+  name Switch2
+  xpos -711
+  ypos 66
+ }
+set Nc5a29910 [stack 0]
+ Expression {
+  temp_name0 rr
+  temp_expr0 ((0.5+x)/width)+ax
+  temp_name1 gg
+  temp_expr1 1-((0.5+y)/height)-ay
+  temp_name2 xx
+  temp_expr2 gg*sin(pi*2*(1-rr))
+  temp_name3 yy
+  temp_expr3 gg*cos(pi*2*rr)
+  expr0 (1+xx)*.5+(rx-.5)
+  expr1 (1+yy)*.5+(ry-.5)
+  channel2 {-rgba.red -rgba.green rgba.blue rgba.alpha}
+  expr2 0
+  channel3 none
+  name Expression3
+  xpos -516
+  ypos 128
+  addUserKnob {20 User}
+  addUserKnob {7 ax l Tx}
+  addUserKnob {7 ay l Ty}
+  addUserKnob {7 rx l Rx}
+  rx 0.5
+  addUserKnob {7 ry l Ry}
+  ry 0.5
+ }
+push $Nc5a29910
+ Expression {
+  temp_name0 gg
+  temp_expr0 (0.5+x)/(width)-.5
+  temp_name1 rr
+  temp_expr1 (0.5+y)/(height)-.5
+  temp_name2 xx
+  temp_expr2 sqrt(rr*rr+gg*gg)
+  temp_name3 yy
+  temp_expr3 "atan2(x-width/2 , y-height/2 )/pi"
+  channel0 {rgba.red -rgba.green -rgba.blue none}
+  expr0 1-(yy<0?1-abs(yy)/2:yy/2)
+  channel1 {-rgba.red rgba.green -rgba.blue none}
+  expr1 (.5-xx)*2
+  channel2 {-rgba.red -rgba.green rgba.blue none}
+  expr2 0
+  expr3 0
+  name Expression2
+  xpos -638
+  ypos 131
+  addUserKnob {20 User}
+ }
+ Switch {
+  inputs 2
+  which {{parent.Out}}
+  name Switch1
+  xpos -638
+  ypos 180
+ }
+push $Nc5a29910
+ STMap {
+  inputs 2
+  uv rgb
+  name STMap3
+  xpos -711
+  ypos 242
+ }
+ Output {
+  name Output1
+  xpos -711
+  ypos 331
+ }
+end_group
+Crop {
+ box {0 0 512 512}
+ name Crop1
+ xpos 152
+ ypos 46
+}
+Dilate {
+ size 9
+ name Dilate1
+ xpos 152
+ ypos 83
+}
+Group {
+ inputs 0
+ name PolarDistort1
+ xpos -40
+ ypos 35
+ addUserKnob {20 User l Controls}
+ addUserKnob {4 Out l Transform M {"Rectangular to Polar" "Polar to Rectangular" ""}}
+ Out "Polar to Rectangular"
+ addUserKnob {6 Ccc l CheckerSample +STARTLINE}
+ Ccc true
+ addUserKnob {26 About l "" +STARTLINE T "\nDaniel Velikov  © 2015 \n"}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos -711
+  ypos -2
+ }
+ CheckerBoard2 {
+  inputs 0
+  name CheckerBoard1
+  xpos -516
+  ypos 42
+ }
+ Switch {
+  inputs 2
+  which {{!Ccc}}
+  name Switch2
+  xpos -711
+  ypos 66
+ }
+set Nc5a5e330 [stack 0]
+ Expression {
+  temp_name0 rr
+  temp_expr0 ((0.5+x)/width)+ax
+  temp_name1 gg
+  temp_expr1 1-((0.5+y)/height)-ay
+  temp_name2 xx
+  temp_expr2 gg*sin(pi*2*(1-rr))
+  temp_name3 yy
+  temp_expr3 gg*cos(pi*2*rr)
+  expr0 (1+xx)*.5+(rx-.5)
+  expr1 (1+yy)*.5+(ry-.5)
+  channel2 {-rgba.red -rgba.green rgba.blue rgba.alpha}
+  expr2 0
+  channel3 none
+  name Expression3
+  xpos -516
+  ypos 128
+  addUserKnob {20 User}
+  addUserKnob {7 ax l Tx}
+  addUserKnob {7 ay l Ty}
+  addUserKnob {7 rx l Rx}
+  rx 0.5
+  addUserKnob {7 ry l Ry}
+  ry 0.5
+ }
+push $Nc5a5e330
+ Expression {
+  temp_name0 gg
+  temp_expr0 (0.5+x)/(width)-.5
+  temp_name1 rr
+  temp_expr1 (0.5+y)/(height)-.5
+  temp_name2 xx
+  temp_expr2 sqrt(rr*rr+gg*gg)
+  temp_name3 yy
+  temp_expr3 "atan2(x-width/2 , y-height/2 )/pi"
+  channel0 {rgba.red -rgba.green -rgba.blue none}
+  expr0 1-(yy<0?1-abs(yy)/2:yy/2)
+  channel1 {-rgba.red rgba.green -rgba.blue none}
+  expr1 (.5-xx)*2
+  channel2 {-rgba.red -rgba.green rgba.blue none}
+  expr2 0
+  expr3 0
+  name Expression2
+  xpos -638
+  ypos 131
+  addUserKnob {20 User}
+ }
+ Switch {
+  inputs 2
+  which {{parent.Out}}
+  name Switch1
+  xpos -638
+  ypos 180
+ }
+push $Nc5a5e330
+ STMap {
+  inputs 2
+  uv rgb
+  name STMap3
+  xpos -711
+  ypos 242
+ }
+ Output {
+  name Output1
+  xpos -711
+  ypos 331
+ }
+end_group
+Grade {
+ multiply 0.03
+ name Grade1
+ xpos -40
+ ypos 59
+}
+Merge2 {
+ inputs 2
+ name Merge1
+ xpos -40
+ ypos 87
+}
+push $Nc4cef050
+NoOp {
+ name transfomations_RECT_to_POLAR
+ xpos 308
+ ypos 32
+ addUserKnob {20 User}
+ addUserKnob {7 rr}
+ rr {{((0.5+XY1.x)/width)}}
+ addUserKnob {7 gg}
+ gg {{1-((0.5+XY1.y)/height)}}
+ addUserKnob {7 xx}
+ xx {{gg*sin(pi*2*(1-rr))}}
+ addUserKnob {7 yy}
+ yy {{gg*cos(pi*2*rr)}}
+ addUserKnob {12 PolarXY1}
+ PolarXY1 {{((1+xx)*.5)*width} {((1+yy)*.5)*height}}
+ addUserKnob {12 XY1}
+ XY1 {-2 0}
+}
+push $Nc4cef050
+NoOp {
+ name transfomations_POLAR_to_RECT
+ xpos 451
+ ypos 37
+ addUserKnob {20 User}
+ addUserKnob {7 rr}
+ rr {{(0.5+PolarXY1.y)/(height)-.5}}
+ addUserKnob {7 gg}
+ gg {{(0.5+PolarXY1.x)/(width)-.5}}
+ addUserKnob {7 xx}
+ xx {{sqrt(rr*rr+gg*gg)}}
+ addUserKnob {7 yy}
+ yy {{"atan2(PolarXY1.x-width/2 , PolarXY1.y-height/2 )/pi"}}
+ addUserKnob {26 ""}
+ addUserKnob {12 PolarXY1}
+ PolarXY1 {142 370}
+ addUserKnob {26 leg l "" +STARTLINE T "\tX = Degree\n\tY = Amplitude"}
+ addUserKnob {26 ""}
+ addUserKnob {12 XY1}
+ XY1 {{(1-(yy<0?1-abs(yy)/2:yy/2))*width} {((.5-xx)*2)*height}}
+}
+Group {
+ inputs 0
+ name WavelenghtGENv3
+ help "15:05:2020\nWavelenghtGEN v3.0.1\nGuillem Ramisa de Soto"
+ xpos 680
+ ypos -8
+ addUserKnob {20 User l controls}
+ addUserKnob {26 ""}
+ addUserKnob {22 refresh -STARTLINE}
+ addUserKnob {26 space l "" -STARTLINE T "        //        "}
+ addUserKnob {6 lin l linear -STARTLINE}
+ lin true
+ addUserKnob {26 ""}
+ addUserKnob {14 Resolution -STARTLINE R 0 100}
+ Resolution {300 30}
+ addUserKnob {41 filter -STARTLINE T Reformat1.filter}
+ addUserKnob {26 ""}
+ addUserKnob {26 leg l "" +STARTLINE T "WavelengthGEN v3.0.1\nGuillem Ramisa de Soto || 2020"}
+}
+ Reformat {
+  inputs 0
+  type "to box"
+  box_width 300
+  box_height 30
+  box_fixed true
+  name Reformat3
+  xpos -852
+  ypos -105
+ }
+ Expression {
+  expr0 "x == yPOS ? SPECTRA.r : 0"
+  expr1 "x == yPOS ? SPECTRA.g : 0"
+  expr2 "x == yPOS ? SPECTRA.b : 0"
+  expr3 1
+  name wavelengthGENv3
+  tile_color 0xff000000
+  selected true
+  xpos -852
+  ypos -54
+  addUserKnob {20 User}
+  addUserKnob {7 w l wavelength R 400 700}
+  w {{yPOS+400}}
+  addUserKnob {18 t}
+  t {{"w>=400&&w<410?(w-400)/(410-400):0\n||w>=410 &&w<475?(w-410)/(475-410):0\n||w>=545 &&w<595?(w-545)/(595-545):0\n||w>=595 &&w<650?(w-595)/(650-595):0\n||w>=650 &&w<700?(w-650)/(700-650):0"} {"w>=415&&w<475?(w-415)/(475-415):0\n||w>=475&&w<590?(w-475)/(590-475):0\n||w>=585&&w<639?(w-585)/(639-585):0"} {"w>=400&&w<475?(w-400)/(475-400):0\n||w>=475 &&w<560?(w-475)/(560-475):0"}}
+  addUserKnob {6 t_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 SPECTRA}
+  SPECTRA {{"w>=400&&w<410?+(0.33*t.r)-(0.20*t.r*t.r):0\n||w>=410&&w<475?0.14-(0.13*t.r*t.r):0\n||w>=545&&w<595?+(1.98*t.r)-(t.r*t.r):0\n||w>=595&&w<650?0.98+(0.06*t.r)-(0.40*t.r*t.r):0\n||w>=650&&w<700?0.65-(0.84*t.r)+(0.20*t.r*t.r):0"} {"w>=415&&w<475?+(0.80*t.g*t.g):0\n||w>=475&&w<590?0.8+(0.76*t.g)-(0.80*t.g*t.g):0\n||w>=585&&w<639?0.84-(0.84*t.g):0"} {"w>=400&&w<475?+(2.20*t.b)-(1.50*t.b*t.b):0\n||w>=475&&w<560?0.7-(t.b)+(0.30*t.b*t.b):0"}}
+  addUserKnob {6 SPECTRA_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 ""}
+  addUserKnob {3 yPOS l Y}
+  yPOS {{frame-1}}
+  addUserKnob {26 ""}
+  addUserKnob {26 ""}
+  addUserKnob {26 leg l "" +STARTLINE T "From linearized real spectroscopy data.\nhttps://www.cfa.harvard.edu/ssp/images/SolarCCD.jpg\n\nPorted by Guillem Ramisa de Soto || 2020"}
+ }
+ TimeEcho {
+  mode Plus
+  framesbehind {{parent.Reformat3.box_width}}
+  name TimeEcho1
+  xpos -852
+  ypos 1
+ }
+ FrameHold {
+  first_frame {{parent.Reformat3.box_width}}
+  name FrameHold1
+  xpos -852
+  ypos 25
+ }
+ Colorspace {
+  colorspace_in sRGB
+  name Colorspace2
+  xpos -852
+  ypos 57
+  disable {{!parent.lin}}
+ }
+ Reformat {
+  type "to box"
+  box_width {{parent.Resolution.w}}
+  box_height {{parent.Resolution.h}}
+  box_fixed true
+  name Reformat1
+  xpos -852
+  ypos 81
+ }
+ Output {
+  name Output1
+  xpos -852
+  ypos 105
+ }
+end_group
+Viewer {
+ inputs 2
+ frame_range 1-100
+ name Viewer1
+ xpos 70
+ ypos 201
+}
+Group {
+ inputs 0
+ name WavelenghtGENv4
+ help "16:05:2020\nWavelenghtGEN v4.0.2\nGuillem Ramisa de Soto"
+ selected true
+ xpos 593
+ ypos -9
+ addUserKnob {20 User l controls}
+ addUserKnob {26 ""}
+ addUserKnob {22 refresh -STARTLINE}
+ addUserKnob {26 space l "" -STARTLINE T "        //        "}
+ addUserKnob {41 colorspace_out l "out space" -STARTLINE T Colorspace1.colorspace_out}
+ addUserKnob {26 ""}
+ addUserKnob {41 box_width l width/height T RES_out.box_width}
+ addUserKnob {41 box_height l "" -STARTLINE T RES_out.box_height}
+ addUserKnob {41 posOffsetRGB_panelDropped l "panel dropped state" +INVISIBLE T wavelengthIMPL1.posOffsetRGB_panelDropped}
+ addUserKnob {26 ""}
+ addUserKnob {26 leg l "" +STARTLINE T "WavelengthGEN v4.0.2\nGuillem Ramisa de Soto || 2020"}
+}
+ Reformat {
+  inputs 0
+  type "to box"
+  box_width 400
+  box_height 100
+  box_fixed true
+  resize distort
+  name RES_Base
+  xpos -656
+  ypos -125
+ }
+ Expression {
+  expr0 "x == Ypos ? RGBsum.r : 0"
+  expr1 "x == Ypos ? RGBsum.g : 0"
+  expr2 "x == Ypos ? RGBsum.b : 0"
+  expr3 1
+  name WavelengthIMPLv4
+  selected true
+  xpos -656
+  ypos -101
+  addUserKnob {20 User}
+  addUserKnob {7 w R 380 780}
+  w {{Ypos+380}}
+  addUserKnob {26 ""}
+  addUserKnob {18 RGBsum}
+  RGBsum {{"w>= 380 && w< 410 ? lerp(0.19000,0.58633,0.58633,0.19000, (0.6 - 0.41 * (410-w)/30) ) : 0\n\n|| w>= 410 && w< 440 ? lerp(0,0.18367,0.18367,0, (0.19 - 0.19 * (440-w)/30) ) : 0\n\n|| w>= 440 && w< 490 ? 0 : 0\n\n|| w>= 490 && w< 510 ? 0 : 0\n\n|| w>= 510 && w< 580 ? 1 - (580-w)/70 : 0\n\n|| w>= 580 && w< 640 ? 1 : 0\n\n|| w>= 640 && w< 700 ? 1 : 0\n\n|| w>= 700 && w< 780 ? 0.35 + 0.65 * (780-w)/80 : 0"} {"w>= 380 && w< 410 ? 0 : 0\n\n|| w>= 410 && w< 440 ? 0 : 0\n\n|| w>= 440 && w< 490 ? 1 - (490-w)/50 : 0\n\n|| w>= 490 && w< 510 ? 1 : 0\n\n|| w>= 510 && w< 580 ? 1 : 0\n\n|| w>= 580 && w< 640 ? (640-w)/60 : 0\n\n|| w>= 640 && w< 700 ? 0 : 0\n\n|| w>= 700 && w< 780 ? 0 : 0"} {"w>= 380 && w< 410 ? lerp(0.41,0.99,0.99,0.41,( 0.39 + 0.6 * (410-w)/30)) : 0\n\n|| w>= 410 && w< 440 ? 1 : 0\n\n|| w>= 440 && w< 490 ? 1 : 0\n\n|| w>= 490 && w< 510 ? (510-w)/20 : 0\n\n|| w>= 510 && w< 580 ? 0 : 0\n\n|| w>= 580 && w< 640 ? 0 : 0\n\n|| w>= 640 && w< 700 ? 0 : 0\n\n|| w>= 700 && w< 780 ? 0 : 0"}}
+  addUserKnob {6 RGBsum_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 ""}
+  addUserKnob {3 Ypos l Y}
+  Ypos {{frame-1}}
+  addUserKnob {6 RGBoff_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 ""}
+  addUserKnob {26 leg l "" +STARTLINE T "From wavelength to rgb filter.\nDragoş MIHAI1, Eugen STRĂJESCU2 // 2007\nISSN1453-2358\n\nPorted by Guillem Ramisa de Soto || 2020"}
+ }
+ TimeEcho {
+  framesbehind {{parent.RES_Base.box_width}}
+  frmaesfade 0
+  name TimeEcho
+  xpos -656
+  ypos -77
+ }
+ FrameHold {
+  first_frame {{parent.RES_Base.box_width}}
+  name FrameHold
+  xpos -656
+  ypos -53
+  addUserKnob {20 User}
+  addUserKnob {7 rfrsh l "" +STARTLINE}
+  rfrsh 1
+ }
+ Colorspace {
+  colorspace_in sRGB
+  name Colorspace1
+  xpos -656
+  ypos -21
+ }
+ Reformat {
+  type "to box"
+  box_width 400
+  box_height 40
+  box_fixed true
+  resize distort
+  filter Impulse
+  name RES_out
+  xpos -656
+  ypos 3
+ }
+ Output {
+  name Output1
+  xpos -656
+  ypos 27
+ }
+end_group
